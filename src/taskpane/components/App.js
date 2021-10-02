@@ -94,6 +94,20 @@ function App() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [file]);
 
+  const click = async () => {
+    try {
+      await Excel.run(async (context) => {
+        var sheet = context.workbook.worksheets.getActiveWorksheet();
+        var range = sheet.getCell(2, 2);
+        range.select();
+
+        return context.sync();
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <div className="App">
       <header className="header">
@@ -111,6 +125,7 @@ function App() {
               { mode === UploadMode && <UploadProgress uploadProgress={uploadProgress} file={file} /> }
               { mode === InitialMode && <FileUploader setFile={setFile} /> }
               { mode === ResultMode && <ResultList results={results} file={file} /> }
+              <button className="fileUploaderbutton" onClick={click}>2-2に移動</button>
             </Route>
           </Switch>
         </div>
@@ -155,36 +170,6 @@ export default App;
 //    });
 //  }
 //
-//  click = async () => {
-//    try {
-//      await Excel.run(async (context) => {
-//        var sheet = context.workbook.worksheets.getActiveWorksheet();
-//        //var range = sheet.getRange("B2:C5");
-//        //sheet.
-//
-//        //range.dataValidation.errorAlert = {
-//        //  message: "sorry, only positive whole numbers are allowed",
-//        //  showAlert: true,
-//        //  style: "stop",
-//        //  title: "Negative or Decimal Number Entered"
-//        //};
-//        //range.dataValidation.rule = {
-//        //  decimal: {
-//        //    formula1: 0,
-//        //    formula2: 100,
-//        //    operator: "Between"
-//        //  }
-//        //};
-//
-//        var range = sheet.getCell(2, 2);
-//        range.select();
-//
-//        return context.sync();
-//      });
-//    } catch (error) {
-//      console.error(error);
-//    }
-//  };
 //
 //  render() {
 //    const { title, isOfficeInitialized } = this.props;
