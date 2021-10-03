@@ -48,10 +48,10 @@ function App() {
 
   useEffect(() => {
     if (file === undefined || file === null) {
-      console.log("file is undefiled");
       return;
     }
 
+    setMonitor("we've gonna upload file!");
     console.log(file);
 
     setMode(UploadMode);
@@ -138,7 +138,7 @@ function App() {
   const getCurrentFile = async() => {
     try {
       await Excel.run(async (context) => {
-        var title = decodeURI(Office.context.document.url).split('/').pop();
+        var title = decodeURI(Office.context.document.url).split('/').pop().split('\').pop();
         Office.context.document.getFileAsync(Office.FileType.Compressed, 
           (result) => {
             if (result.status == "succeeded") {
