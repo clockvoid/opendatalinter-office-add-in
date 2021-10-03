@@ -7,7 +7,10 @@ const ResultList = (props) => {
     <div>
       <div className="resultList">
         <h2 className="resultListHeadline">形式チェック</h2>
-        <p className="resultListDescription">{ props.file !== undefined && props.file.name }</p>
+        <p className="resultListDescription">
+        { props.file !== undefined && props.file.name !== undefined && props.file.name }
+        { props.file !== undefined && props.file.fileName !== undefined && props.file.fileName }
+        </p>
         <ul className="resultListListcontenter">
           <>
             {props.results.map((result) =>
@@ -34,6 +37,20 @@ const ResultItem = (props) => {
   const message = invalid_contents !== undefined ? invalid_contents.error_message : undefined;
   const cells = invalid_contents !== undefined ? invalid_contents.invalid_cells : undefined;
   const [accordion, setAccordion] = useState(true)
+
+  const moveTo = async (column, row) => {
+    try {
+      await Excel.run(async (context) => {
+        var sheet = context.workbook.worksheets.getActiveWorksheet();
+        var range = sheet.getCell(column - 1, row - 1);
+        range.select();
+
+        return context.sync();
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   if (isValid === true) {
   // ok
@@ -70,7 +87,11 @@ const ResultItem = (props) => {
           <div className="resultListListContents" style={accordion ? ({ display: "block" }) : ({ display: "none" })} key={key + "14"}>
             <div className="resultListListContentsErrors" key={key + "15"}>
               {cells.map((cell, index) =>
-                <span className="resultListListContentsError" key={key + "16" + index.toString()}>{cell[0]}行{cell[1]}列,</span>
+              <button className="resultListListLabel" onClick={() => moveTo(cell[0], cell[1])}>
+                <span className="resultListListContentsError" key={key + "25" + index.toString()}>
+                  {cell[0]}行{cell[1]}列,
+                </span>
+              </button>
               )}
             </div>
           </div>
@@ -90,7 +111,11 @@ const ResultItem = (props) => {
           <p className="resultListListContentsErrorTitle" key={key + "23"}>{message}</p>
           <div className="resultListListContentsErrors" key={key + "24"}>
             {cells.map((cell, index) =>
-              <span className="resultListListContentsError" key={key + "25" + index.toString()}>{cell[0]}行 {cell[1]}列,</span>
+            <button className="resultListListLabel" onClick={() => moveTo(cell[0], cell[1])}>
+              <span className="resultListListContentsError" key={key + "25" + index.toString()}>
+                {cell[0]}行{cell[1]}列,
+              </span>
+            </button>
             )}
           </div>
         </div>
