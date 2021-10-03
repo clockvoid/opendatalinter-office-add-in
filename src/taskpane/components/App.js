@@ -151,7 +151,7 @@ function App() {
                   setFile(file);
                 },
                 (reject) => {
-                  setMonitor(reject);
+                  setMonitor(reject.ErrorMessage);
                   console.log(reject);
                 }
               )
