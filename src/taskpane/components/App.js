@@ -1,14 +1,8 @@
 import * as React from "react";
-import PropTypes from "prop-types";
-import { DefaultButton } from "@fluentui/react";
-import Header from "./Header";
-import HeroList from "./HeroList";
-import Progress from "./Progress";
 // images references in the manifest
 import "../../../assets/icon-16.png";
 import "../../../assets/icon-32.png";
 import "../../../assets/icon-80.png";
-import { hot } from "react-hot-loader/root";
 
 import { useEffect, useState } from 'react';
 import FileUploader from './FileUploader';
@@ -36,31 +30,19 @@ function App() {
   const [initialResult, setInitialResult] = useState([]);
   const [mode, setMode] = useState(InitialMode);
 
-  let history = useHistory();
-  let location = useLocation();
-
-  useEffect(() => {
-    if (location.pathname === "/") {
-      setMode(InitialMode);
-      axios.request({
-        method: 'get',
-        url: 'https://opendatalinter.volare.site/'
-      }).then(data => {
-        setInitialResult(data.data);
-      });
-      setUploadProgress(0);
-    }
-    if (location.pathname === "/result") {
-      if (file === undefined || file === null) {
-        history.replace("/");
-      }
-    }
-  // fileを参照してhistoryを更新しているが，無限ループにはならないので無視
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [location]);
-
   const sleep = (ms) => {
     return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  const reset = () => {
+    setMode(InitialMode);
+    axios.request({
+      method: 'get',
+      url: 'https://opendatalinter.volare.site/'
+    }).then(data => {
+      setInitialResult(data.data);
+    });
+    setUploadProgress(0);
   }
 
   useEffect(() => {
@@ -82,7 +64,6 @@ function App() {
         if (e.loaded === e.total) {
           sleep(50).then(() => {
             setMode(ResultMode);
-            history.push("/result");
           });
         }
       }
@@ -117,17 +98,10 @@ function App() {
       </header>
       <main className="main">
         <div className="mainInner">
-          <Switch>
-            <Route path="/result">
-              <ResultList results={results} file={file} />
-            </Route>
-            <Route path="/">
-              { mode === UploadMode && <UploadProgress uploadProgress={uploadProgress} file={file} /> }
-              { mode === InitialMode && <FileUploader setFile={setFile} /> }
-              { mode === ResultMode && <ResultList results={results} file={file} /> }
-              <button className="fileUploaderbutton" onClick={click}>2-2に移動</button>
-            </Route>
-          </Switch>
+          { mode === UploadMode && <UploadProgress uploadProgress={uploadProgress} file={file} /> }
+          { mode === InitialMode && <FileUploader setFile={setFile} /> }
+          { mode === ResultMode && <ResultList results={results} file={file} goBack={reset} /> }
+          <button className="fileUploaderbutton" onClick={click}>2-2に移動</button>
         </div>
       </main>
       <footer className="footer">

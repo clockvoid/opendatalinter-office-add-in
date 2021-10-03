@@ -3,8 +3,6 @@ import { useHistory } from "react-router-dom";
 import * as React from "react";
 
 const ResultList = (props) => {
-  let history = useHistory();
-
   return (
     <div>
       <div className="resultList">
@@ -20,7 +18,7 @@ const ResultList = (props) => {
       </div>
 
       <div style={{textAlign: "center"}}>
-        <button className="fileUploaderbutton" onClick={() => history.goBack()}>再アップロードする</button>
+        <button className="fileUploaderbutton" onClick={() => props.goBack()}>再アップロードする</button>
       </div>
     </div>
   );
