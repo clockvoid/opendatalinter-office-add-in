@@ -51,14 +51,14 @@ function App() {
       return;
     }
 
-    setMonitor("we've gonna upload file!");
+    setMonitor(`we've gonna upload file: ${file.fileName}`);
     console.log(file);
 
     setMode(UploadMode);
     setResults(initialResult);
 
     const submitData = new FormData();
-    submitData.append("file", file);
+    submitData.append("file", file, file.fileName);
     axios.request({
       method: 'post',
       url: 'https://opendatalinter.volare.site/',
@@ -148,7 +148,7 @@ function App() {
                 (result) => {
                   console.log(result);
                   setMonitor(`file load succeeded!: ${title}`);
-                  let file = new Blob(result.Data, { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"});
+                  let file = new Blob([new Uint8Array(result.Data)], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"});
                   file['fileName'] = title;
                   setMonitor(`file is created`);
                   setFile(file);
