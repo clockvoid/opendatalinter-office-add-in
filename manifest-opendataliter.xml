@@ -4,7 +4,7 @@
   <Version>1.0.0.0</Version>
   <ProviderName>clock_void</ProviderName>
   <DefaultLocale>en-US</DefaultLocale>
-  <DisplayName DefaultValue="Example Add-in"/>
+  <DisplayName DefaultValue="Open Data Linter"/>
   <Description DefaultValue="A template to get started."/>
   <IconUrl DefaultValue="https://example-office-add-in.vercel.app/assets/icon-32.png"/>
   <HighResolutionIconUrl DefaultValue="https://example-office-add-in.vercel.app/assets/icon-64.png"/>
@@ -72,13 +72,13 @@
         <bt:Url id="Taskpane.Url" DefaultValue="https://example-office-add-in.vercel.app/taskpane.html"/>
       </bt:Urls>
       <bt:ShortStrings>
-        <bt:String id="GetStarted.Title" DefaultValue="Get started with your sample add-in!"/>
-        <bt:String id="CommandsGroup.Label" DefaultValue="Commands Group"/>
-        <bt:String id="TaskpaneButton.Label" DefaultValue="Show Taskpane"/>
+          <bt:String id="GetStarted.Title" DefaultValue="Open Data Linterがロードされました。"/>
+        <bt:String id="CommandsGroup.Label" DefaultValue="Open Data Linter"/>
+        <bt:String id="TaskpaneButton.Label" DefaultValue="Linterを開く"/>
       </bt:ShortStrings>
       <bt:LongStrings>
-        <bt:String id="GetStarted.Description" DefaultValue="Your sample add-in loaded succesfully. Go to the HOME tab and click the 'Show Taskpane' button to get started."/>
-        <bt:String id="TaskpaneButton.Tooltip" DefaultValue="Click to Show a Taskpane"/>
+          <bt:String id="GetStarted.Description" DefaultValue="「Linterを開く」ボタンを押して、ファイルの形式を確認しましょう。"/>
+        <bt:String id="TaskpaneButton.Tooltip" DefaultValue="ここをクリックしてLinterの画面を開く"/>
       </bt:LongStrings>
     </Resources>
   </VersionOverrides>
