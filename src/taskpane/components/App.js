@@ -138,7 +138,7 @@ function App() {
   const getCurrentFile = async() => {
     try {
       await Excel.run(async (context) => {
-        var title = decodeURI(Office.context.document.url).split('/').pop().split('\').pop();
+        var title = decodeURI(Office.context.document.url).split('/').pop().split('\\').pop();
         Office.context.document.getFileAsync(Office.FileType.Compressed, 
           (result) => {
             if (result.status == "succeeded") {
