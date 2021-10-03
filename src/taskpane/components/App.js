@@ -148,8 +148,11 @@ function App() {
                 (result) => {
                   console.log(result);
                   setMonitor(`file load succeeded!: ${title}`);
-                  let file = new File(result.Data, title, { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"});
+                  let file = new Blob(result.Data, { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"});
+                  file['fileName'] = title;
+                  setMonitor(`file is created`);
                   setFile(file);
+                  setMonitor(`setFile is done!`);
                 },
                 (reject) => {
                   setMonitor(reject.ErrorMessage);
