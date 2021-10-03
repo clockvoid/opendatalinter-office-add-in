@@ -147,6 +147,7 @@ function App() {
               getAllSlices(myFile).then(
                 (result) => {
                   console.log(result);
+                  setMonitor(`file load succeeded!: ${title}`);
                   let file = new File(result.Data, title, { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"});
                   setFile(file);
                 },
