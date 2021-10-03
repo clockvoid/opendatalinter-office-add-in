@@ -73,11 +73,6 @@ function App() {
 
   return (
     <div className="App">
-      <header className="header">
-        <h1 className="headerInner">
-          Open Data Linter
-        </h1>
-      </header>
       <main className="main">
         <div className="mainInner">
           { mode === UploadMode && <UploadProgress uploadProgress={uploadProgress} file={file} /> }
