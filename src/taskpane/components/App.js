@@ -29,6 +29,7 @@ function App() {
   const [results, setResults] = useState([]);
   const [initialResult, setInitialResult] = useState([]);
   const [mode, setMode] = useState(InitialMode);
+  const [monitor, setMonitor] = useState();
 
   const sleep = (ms) => {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -47,8 +48,11 @@ function App() {
 
   useEffect(() => {
     if (file === undefined || file === null) {
+      console.log("file is undefiled");
       return;
     }
+
+    console.log(file);
 
     setMode(UploadMode);
     setResults(initialResult);
@@ -89,6 +93,82 @@ function App() {
     }
   };
 
+  const getAllSlices = (file) => {
+    var isError = false;
+
+    return new Promise(async (resolve, reject) => {
+      var documentFileData = [];
+      for (var sliceIndex = 0; (sliceIndex < file.sliceCount) && !isError; sliceIndex++) {
+        var sliceReadPromise = new Promise((sliceResolve, sliceReject) => {
+          file.getSliceAsync(sliceIndex, (asyncResult) => {
+            if (asyncResult.status === Office.AsyncResultStatus.Succeeded) {
+              documentFileData = documentFileData.concat(asyncResult.value.data);
+              sliceResolve({
+                IsSuccess: true,
+                Data: documentFileData
+              });
+            } else {
+              file.closeAsync();
+              sliceReject({
+                IsSuccess: false,
+                ErrorMessage: `Error in reading the slice: ${sliceIndex} of the document`
+              });
+            }
+          });
+        });
+        await sliceReadPromise.catch((error) => {
+          isError = true;
+        });
+      }
+
+      if (isError || !documentFileData.length) {
+        reject('Error while reading document. Please try it again.');
+        return;
+      }
+
+      file.closeAsync();
+
+      resolve({
+        IsSuccess: true,
+        Data: documentFileData
+      });
+    });
+  }
+
+  const getCurrentFile = async() => {
+    try {
+      await Excel.run(async (context) => {
+        var title = decodeURI(Office.context.document.url).split('/').pop();
+        Office.context.document.getFileAsync(Office.FileType.Compressed, 
+          (result) => {
+            if (result.status == "succeeded") {
+              var myFile = result.value;
+              console.log(myFile);
+              getAllSlices(myFile).then(
+                (result) => {
+                  console.log(result);
+                  let file = new File(result.Data, title, { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"});
+                  setFile(file);
+                },
+                (reject) => {
+                  setMonitor(reject);
+                  console.log(reject);
+                }
+              )
+            } else {
+              setMonitor(result.error.message);
+              console.log(result.error.message);
+            }
+        });
+
+        return context.sync();
+      });
+    } catch (error) {
+      setMonitor(error.message);
+      console.error(error);
+    }
+  }
+
   return (
     <div className="App">
       <header className="header">
@@ -101,7 +181,8 @@ function App() {
           { mode === UploadMode && <UploadProgress uploadProgress={uploadProgress} file={file} /> }
           { mode === InitialMode && <FileUploader setFile={setFile} /> }
           { mode === ResultMode && <ResultList results={results} file={file} goBack={reset} /> }
-          <button className="fileUploaderbutton" onClick={click}>2-2に移動</button>
+          <button className="fileUploaderbutton" onClick={getCurrentFile}>2-2に移動</button>
+          <div className="monitor">{monitor}</div>
         </div>
       </main>
       <footer className="footer">
