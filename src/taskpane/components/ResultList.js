@@ -38,11 +38,34 @@ const ResultItem = (props) => {
   const cells = invalid_contents !== undefined ? invalid_contents.invalid_cells : undefined;
   const [accordion, setAccordion] = useState(true)
 
+  const encodeRow = (row) => {
+    var quo = row;
+    var colStr = "";
+
+    do {
+      var letter = String.fromCharCode('A'.charCodeAt() + (quo - 1) % 26);
+      quo = Math.floor((quo - 1) / 26);
+      colStr = letter + colStr;
+    } while (quo >= 1);
+
+    return colStr;
+  }
+
   const moveTo = async (column, row) => {
     try {
       await Excel.run(async (context) => {
         var sheet = context.workbook.worksheets.getActiveWorksheet();
-        var range = sheet.getCell(column - 1, row - 1);
+
+        var range;
+        // どっちかnullしかこない
+        if (column === null) {
+          var encodedRow = encodeRow(row);
+          range = sheet.getRange(encodedRow + ':' + encodedRow);
+        } else if (row === null) {
+          range = sheet.getRange(row.toString() + ':' + row.toString());
+        } else {
+          range = sheet.getCell(column - 1, row - 1);
+        }
         range.select();
 
         return context.sync();
@@ -51,6 +74,25 @@ const ResultItem = (props) => {
       console.error(error);
     }
   };
+
+  const comment = async (column, row, message) => {
+    if (column === null || row === null) return;
+    try {
+      await Excel.run(async (context) => {
+        var comments = context.workbook.comments;
+
+        //comments.getItemByCell(encodeRow(row) + column.toString()).delete()
+
+        var address = encodeRow(row) + column.toString();
+        console.log(column, row);
+        comments.add(address, message);
+
+        return context.sync();
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
   if (isValid === true) {
   // ok
@@ -87,9 +129,9 @@ const ResultItem = (props) => {
           <div className="resultListListContents" style={accordion ? ({ display: "block" }) : ({ display: "none" })} key={key + "14"}>
             <div className="resultListListContentsErrors" key={key + "15"}>
               {cells.map((cell, index) =>
-              <button className="resultListListLabel" onClick={() => moveTo(cell[0], cell[1])}>
+              <button className="resultListListLabel" onClick={() => moveTo(cell[0], cell[1])} key={key + "35"}>
                 <span className="resultListListContentsError" key={key + "25" + index.toString()}>
-                  {cell[0]}行{cell[1]}列,
+                  {cell[0]}{cell[0] !== null && "行"}{cell[1]}{cell[1] !== null && "列"},
                 </span>
               </button>
               )}
@@ -111,9 +153,9 @@ const ResultItem = (props) => {
           <p className="resultListListContentsErrorTitle" key={key + "23"}>{message}</p>
           <div className="resultListListContentsErrors" key={key + "24"}>
             {cells.map((cell, index) =>
-            <button className="resultListListLabel" onClick={() => moveTo(cell[0], cell[1])}>
+            <button className="resultListListLabel" onClick={() => moveTo(cell[0], cell[1])} key={key + "36"}>
               <span className="resultListListContentsError" key={key + "25" + index.toString()}>
-                {cell[0]}行{cell[1]}列,
+                {cell[0]}{cell[0] !== null && "行"}{cell[1]}{cell[1] !== null && "列"},
               </span>
             </button>
             )}
