@@ -28,48 +28,6 @@ const FileUploader = (props) => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [plainFiles]);
 
-  const getAllSlices = (file) => {
-    var isError = false;
-
-    return new Promise(async (resolve, reject) => {
-      var documentFileData = [];
-      for (var sliceIndex = 0; (sliceIndex < file.sliceCount) && !isError; sliceIndex++) {
-        var sliceReadPromise = new Promise((sliceResolve, sliceReject) => {
-          file.getSliceAsync(sliceIndex, (asyncResult) => {
-            if (asyncResult.status === Office.AsyncResultStatus.Succeeded) {
-              documentFileData = documentFileData.concat(asyncResult.value.data);
-              sliceResolve({
-                IsSuccess: true,
-                Data: documentFileData
-              });
-            } else {
-              file.closeAsync();
-              sliceReject({
-                IsSuccess: false,
-                ErrorMessage: `Error in reading the slice: ${sliceIndex} of the document`
-              });
-            }
-          });
-        });
-        await sliceReadPromise.catch((error) => {
-          isError = true;
-        });
-      }
-
-      if (isError || !documentFileData.length) {
-        reject('Error while reading document. Please try it again.');
-        return;
-      }
-
-      file.closeAsync();
-
-      resolve({
-        IsSuccess: true,
-        Data: documentFileData
-      });
-    });
-  }
-
   const getCurrentFile = async() => {
     try {
       await Excel.run(async (context) => {
