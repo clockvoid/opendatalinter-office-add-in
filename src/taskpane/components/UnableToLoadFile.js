@@ -6,7 +6,7 @@ const UnableToLoadFile = (props) => {
     <div className="uploadProgress">
       現在開いているExcelファイルを読み込めませんでした．
 
-      <button className="fileUploaderbutton" onClick={getCurrentFile}>このファイルの形式をチェックする</button>
+      <button className="fileUploaderbutton" onClick={props.updateCurrentFile}>このファイルの形式をチェックする</button>
     </div>
   );
 }
