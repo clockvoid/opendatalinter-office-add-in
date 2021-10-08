@@ -21,7 +21,7 @@ const ResultList = (props) => {
       </div>
 
       <div style={{textAlign: "center"}}>
-        <button className="fileUploaderbutton" onClick={() => props.goBack()}>再アップロードする</button>
+        <button className="fileUploaderbutton" onClick={() => props.goBack()}>再チェックする</button>
       </div>
     </div>
   );
