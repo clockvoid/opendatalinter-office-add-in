@@ -44,7 +44,6 @@ const getAllSlices = (file) => {
 const getCurrentFile = async(setFile) => {
   try {
     await Excel.run(async (context) => {
-      var title = decodeURI(Office.context.document.url).split('/').pop().split('\\').pop();
       Office.context.document.getFileAsync(Office.FileType.Compressed, 
         (result) => {
           if (result.status == "succeeded") {
@@ -53,6 +52,7 @@ const getCurrentFile = async(setFile) => {
             getAllSlices(myFile).then(
               (result) => {
                 console.log(result);
+                var title = decodeURI(Office.context.document.url).split('/').pop().split('\\').pop();
                 let file = new Blob([new Uint8Array(result.Data)], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"});
                 file['fileName'] = title;
                 setFile(file);
